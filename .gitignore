@@ -1,0 +1,17 @@
+# Ignore Java backend build directory
+backend/target/
+
+# Ignore React frontend dependencies
+frontend/node_modules/
+
+# Ignore React frontend build directory
+frontend/build/
+
+# IDE-specific files
+.idea/
+/.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
