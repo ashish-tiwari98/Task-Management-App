@@ -1,5 +1,9 @@
 # Ignore Java backend build directory
 backend/target/
+backend/mvn*
+backend/.mvn
+backend/.gitattributes
+backend/.env
 
 # Ignore React frontend dependencies
 frontend/node_modules/
@@ -14,4 +18,6 @@ frontend/build/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+
 
