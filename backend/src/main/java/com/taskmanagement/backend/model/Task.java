@@ -2,6 +2,9 @@ package com.taskmanagement.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity // Maps class to a database table.
 @Getter //Reduce boilerplate code (lombok annotation)
@@ -15,5 +18,8 @@ public class Task {
 
     private String title;
     private String description;
-    private boolean completed;
+    private String status;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
