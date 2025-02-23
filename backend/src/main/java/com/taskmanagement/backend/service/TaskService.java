@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// Service: Contains business logic and handles interactions between the Repository and Controller.
 @Service
 public class TaskService {
     @Autowired
