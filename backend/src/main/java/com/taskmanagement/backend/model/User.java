@@ -17,6 +17,9 @@ Model: General class that holds data but is not tied to a database. Used for bus
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) //id is primary key and auto incremented
     private Long id;
+    @Column(unique = true) //this ensures it must be unique
     private String username;
     private String password;
+    @Column(unique = true)
+    private String email;
 }
