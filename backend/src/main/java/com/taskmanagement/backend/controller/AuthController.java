@@ -6,6 +6,7 @@ import com.taskmanagement.backend.dto.RegisterRequest;
 import com.taskmanagement.backend.model.User;
 import com.taskmanagement.backend.repository.UserRepository;
 import com.taskmanagement.backend.security.JwtUtil;
+import com.taskmanagement.backend.security.RateLimited;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

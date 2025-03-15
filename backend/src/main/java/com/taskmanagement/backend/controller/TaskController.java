@@ -1,8 +1,11 @@
 package com.taskmanagement.backend.controller;
 
 import com.taskmanagement.backend.model.Task;
+import com.taskmanagement.backend.security.RateLimited;
 import com.taskmanagement.backend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +16,13 @@ import java.util.List;
 @RestController //it marks this class as a MVC REST controller and combines @Controller and @ResponseBody to return json response
 @RequestMapping("/tasks") //base url
 @CrossOrigin(origins = "http://localhost:5173") //To Allow frontend requests .
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS) // Ensure proxying
 public class TaskController {
 
     @Autowired
     private TaskService taskService;
 
+    @RateLimited(value = 3)
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) { //@RequestBody maps incoming json request body to a task object
         return new ResponseEntity<>(taskService.createTask(task), HttpStatus.CREATED); // return status and created task in response body
