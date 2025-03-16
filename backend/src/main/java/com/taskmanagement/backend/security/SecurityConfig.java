@@ -34,7 +34,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/register/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Only admins can access /admin/*
+                        .requestMatchers("/user/**").hasRole("USER") // Only users can access /user/*
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
