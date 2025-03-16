@@ -1,20 +1,43 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
+import { useContext } from "react";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import Register from "./components/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
+        <AppContent />
       </Router>
     </AuthProvider>
+  ); 
+};
+
+const AppContent = () => {
+  const { token } = useContext(AuthContext);
+
+  return (
+    <>
+      {token && <Navbar />}  {/* Show Navbar only when authenticated */}
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route 
+          path="/dashboard" 
+          element={<ProtectedRoute element={<Dashboard />} allowedRoles={["ROLE_USER", "ROLE_ADMIN"]} />}
+        />
+        {/* Remove this if you haven't created ManageUsers yet */}
+        {/* <Route 
+          path="/manage-users" 
+          element={<ProtectedRoute element={<ManageUsers />} allowedRoles={["ADMIN"]} />}
+        /> */}
+        <Route path="/unauthorized" element={<h2>Unauthorized Access</h2>} />
+      </Routes>
+    </>
   );
 };
 

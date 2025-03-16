@@ -3,8 +3,9 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const role = user?.role;
 
   if(!token) {
     return (
@@ -14,7 +15,27 @@ const Dashboard = () => {
       </div>
     )
   }
-  return <h2>Welcome to Dashboard! You are authenticated.</h2>;
+  return(
+    <div>
+      <h2>Welcome to Dashboard!</h2>
+      <p>You are authenticated as <strong>{role}</strong></p>
+
+      {role === "ROLE_ADMIN" && (
+        <div>
+          <h3>Admin Panel</h3>
+          <button onClick={() => navigate("/manage-users")}>Manage Users</button>
+        </div>
+      )}
+
+      {role === "ROLE_USER" && (
+        <div>
+          <h3>User Panel</h3>
+          <p>Access your tasks and projects here.</p>
+        </div>
+      )}
+
+    </div>
+  );
 };
 
 export default Dashboard;

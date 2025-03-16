@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 const Login = () => {
   const { setToken } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -13,16 +14,20 @@ const Login = () => {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      const data = text ? JSON.parse(text) : {}; 
       if(response.ok) {
         setToken(data.token);
         localStorage.setItem("token", data.token);
+        setUser({username: data.username, role: data.role})
+        localStorage.setItem("user", JSON.stringify({ username: data.username, role: data.role }));
         navigate("/dashboard");
       } else {
-        alert("Invalid credentials");
+        alert(data.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("Login failed:", error);
