@@ -1,22 +1,51 @@
-//Manages Auth state globally
-import { createContext, useState, useEffect} from "react";
+import { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; 
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState({username:null, role:null});
+  const [user, setUser] = useState({ username: null, role: null });
+  const navigate = useNavigate();
 
-  //Automatically fetch token from local storage on page reload
   useEffect(() => {
-    const storedToken = localStorage.getItem("token")
-    const storedUser = localStorage.getItem("user")
-    if (storedToken) setToken(storedToken);
-    if (storedUser) setUser(JSON.parse(storedUser))
+    const storedToken = sessionStorage.getItem("token");
+    const storedUser = sessionStorage.getItem("user");
+
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode(storedToken);
+        if (decoded.exp * 1000 < Date.now()) {
+          logout(); // Logout if token is expired
+        } else {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        logout();
+      }
+    }
   }, []);
 
+  const login = (newToken, newUser) => {
+    sessionStorage.setItem("token", newToken);
+    sessionStorage.setItem("user", JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
+    setToken(null);
+    setUser({ username: null, role: null });
+    navigate("/"); // Redirect to login
+  };
+
   return (
-    <AuthContext.Provider value={{ token, setToken, user, setUser }}>
+    <AuthContext.Provider value={{ token, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

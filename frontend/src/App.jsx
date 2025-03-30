@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
 import Login from "./components/Login";
@@ -6,14 +6,15 @@ import Dashboard from "./components/Dashboard";
 import Register from "./components/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import TaskList from "./components/TaskList";
 
 const App = () => {
   return (
-    <AuthProvider>
-      <Router>
+    <BrowserRouter>
+      <AuthProvider>
         <AppContent />
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   ); 
 };
 
@@ -24,11 +25,16 @@ const AppContent = () => {
     <>
       {token && <Navbar />}  {/* Show Navbar only when authenticated */}
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={token ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route 
           path="/dashboard" 
           element={<ProtectedRoute element={<Dashboard />} allowedRoles={["ROLE_USER", "ROLE_ADMIN"]} />}
+        />
+        <Route
+          path="/tasks"
+          element={<ProtectedRoute element={<TaskList />} allowedRoles={["ROLE_USER"]} />}
         />
         {/* Remove this if you haven't created ManageUsers yet */}
         {/* <Route 

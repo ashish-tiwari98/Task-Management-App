@@ -3,14 +3,12 @@ import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const { token, user, setToken } = useContext(AuthContext);
+  const { token, user, logout  } = useContext(AuthContext);
   const role = user?.role;
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    logout();
     navigate("/");
   };
 

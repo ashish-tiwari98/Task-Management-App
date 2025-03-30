@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController //it marks this class as a MVC REST controller and combines @Controller and @ResponseBody to return json response
 @RequestMapping("/tasks") //base url
@@ -35,7 +36,9 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) { //PathVariable extracts id from URL and assigns to id
-        return ResponseEntity.ok(taskService.getTaskById(id));
+        Optional<Task> task = taskService.getTaskById(id);
+        return task.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping("/status/{status}")
@@ -43,12 +46,13 @@ public class TaskController {
         return taskService.getTasksByStatus(status);
     }
 
-
+    @RateLimited(value = 3)
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
         return ResponseEntity.ok(taskService.updateTask(id, task));
     }
 
+    @RateLimited(value = 3)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);

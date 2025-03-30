@@ -1,28 +1,28 @@
 package com.taskmanagement.backend.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-/*
-Entity vs Model:
-
-Entity: Represents a database table and is managed by JPA (@Entity).
-Model: General class that holds data but is not tied to a database. Used for business logic.
- */
-@Entity // Marks this class as a JPA entity (maps to db table)
+@Entity
 @Table(name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) //id is primary key and auto incremented
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true) //this ensures it must be unique
+
+    @Column(unique = true, nullable = false)
     private String username;
-    private String password;
-    @Column(unique = true)
+
+    @Column(unique = true, nullable = false)
     private String email;
-    @Enumerated(EnumType.STRING)
+
     @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 }

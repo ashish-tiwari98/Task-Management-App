@@ -25,10 +25,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // Convert role to a SimpleGrantedAuthority object
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole().name());
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().name());
 
-        return org.springframework.security.core.userdetails.User //converting user to spring security format
+        return org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
                 .authorities(Collections.singletonList(authority))
