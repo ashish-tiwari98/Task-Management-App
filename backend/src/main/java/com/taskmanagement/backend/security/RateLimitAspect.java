@@ -45,3 +45,13 @@ public class RateLimitAspect {
         return joinPoint.proceed();
     }
 }
+
+/*
+AOP Term	        Role in RateLimitAspect
+Aspect	            RateLimitAspect class
+Advice	            @Around("@annotation(rateLimited)") intercepts methods
+Pointcut	        Any method annotated with @RateLimited
+Join Point	        Controller methods like getTasks()
+ProceedingJoinPoint	Executes the intercepted method if allowed
+
+ */

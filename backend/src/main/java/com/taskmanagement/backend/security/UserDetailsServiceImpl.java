@@ -20,6 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    //This method is called by Spring Security when a user logs in.
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
@@ -31,6 +32,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
                 .authorities(Collections.singletonList(authority))
-                .build();
+                .build();//Returns a UserDetails object Spring Security can use.
     }
 }
+
+/*
+We need to provide a custom implementation for UserDetailsService:
+Fetches user details from the database.
+Converts them into a UserDetails object (which Spring Security understands).
+Returns this object for authentication & authorization.
+ */

@@ -53,3 +53,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { //this ensur
         filterChain.doFilter(request, response);//Allows the request to proceed after authentication.
     }
 }
+
+/*
+Full flow
+1. Frontend Sends a Request
+2. Filter Executes:
+Extracts JWT from the request.
+Decodes username from the JWT.
+Loads user details from DB.
+Validates the JWT (checks expiration, signature, etc.).
+Authenticates user (stores authentication in SecurityContextHolder).
+3. Spring Security Authorizes the Request ✅
+
+
+AuthenticationProvider is used only for login authentication.
+JwtAuthenticationFilter authenticates every request after login.
+SecurityContextHolder stores authentication, so Spring Security knows the user is logged in.
+ */

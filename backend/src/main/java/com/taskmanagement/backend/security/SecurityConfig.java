@@ -2,10 +2,8 @@ package com.taskmanagement.backend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,6 +24,13 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+//    Spring Security expects a UserDetailsService implementation to fetch user details from your database.
+//    You must implement UserDetailsService(interface) to tell Spring how to retrieve user information.
+//    interface is like below
+//    public interface UserDetailsService {
+//    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+//}
+
     private final UserDetailsService userDetailsService;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsService userDetailsService) {
@@ -36,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ Fix CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Allows the frontend (e.g., http://localhost:5173) to communicate with the backend. Without this, browsers will block cross-origin requests.
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -47,7 +52,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // ✅ Ensure JWT is processed before login
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // ✅ Ensure JWT is processed before login. Extracts user information from JWT and sets it in SecurityContext.
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
 
@@ -62,10 +67,6 @@ public class SecurityConfig {
         return provider;
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -87,8 +88,16 @@ public class SecurityConfig {
     }
 }
 
-
 /*
+1️⃣ User tries to log in.
+2️⃣ SecurityConfig → Uses AuthenticationProvider.
+3️⃣ AuthenticationProvider → Calls UserDetailsService.loadUserByUsername(username).
+4️⃣ UserDetailsService → Queries UserRepository.
+5️⃣ UserRepository → Fetches user from database.
+6️⃣ AuthenticationProvider → Verifies password using BCrypt.
+7️⃣ If valid, user is authenticated and assigned roles. ✅
+
+
 End-to-End Execution Flow
 1. Login Request (/auth/login)
 
