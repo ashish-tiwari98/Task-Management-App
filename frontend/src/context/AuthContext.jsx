@@ -2,7 +2,10 @@ import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; 
 
-export const AuthContext = createContext();
+//createContext: Creates a global state to share authentication data.
+//useEffect: Runs logic when the app loads
+
+export const AuthContext = createContext();// AuthContext is shared across the application using AuthProvider( wraps the application and provides authentication data)
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);

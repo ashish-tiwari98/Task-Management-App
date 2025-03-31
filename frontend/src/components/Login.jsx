@@ -19,6 +19,13 @@ const Login = () => {
         credentials: "include",
       });
 
+      /*
+      Use credentials: "include" if:
+      Your backend stores authentication tokens in cookies.
+      You are making requests to a different domain (e.g., frontend on localhost:3000 and backend on localhost:8080).
+      You need the backend to recognize the user session.
+      */
+
       const text = await response.text();
       const data = text ? JSON.parse(text) : {}; 
 

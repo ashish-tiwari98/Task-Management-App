@@ -20,9 +20,9 @@ const Dashboard = () => {
       })
         .then((res) => {
           if (res.status === 403) throw new Error("Access Denied! You are not authorized.");
-          return res.json();
+          return res.json();//Extracts the response body and converts it from JSON to a JavaScript object.
         })
-        .then((data) => setUsers(data))
+        .then((data) => setUsers(data)) //`data` contains the JSON object returned in the previous step.
         .catch((err) => setError(err.message)); // ✅ Capture error
     }
   }, [role, token]);
